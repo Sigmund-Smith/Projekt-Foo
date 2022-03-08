@@ -8,3 +8,5 @@ Projekt von zwei, die Wissen was sie machen
 - Formular auswerten 
 - Statistiken veröffentlichen 
 - Coautoren hinzufügen
+- Wie viele Lehrzeichen hat eine Einrückung?
+- Welche Python version wird genutzt
