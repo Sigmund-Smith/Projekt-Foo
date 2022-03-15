@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 import pandas as pd
-from secrets import csv_link
+from secrets import *
 
-dataframe = pd.read_csv(scv_link)
+dataframe = pd.read_csv(csv_link)
 print(dataframe)
