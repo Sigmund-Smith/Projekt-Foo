@@ -5,9 +5,7 @@ import ipywidgets as ipy
 import pandas as pd
 import numpy as np
 
-
-#load dataframe google api
-#dataframe = pd.read_csv("data.csv", parse_dates=["Zeitstempel"], index_col=0)
+dataframe = pd.read_csv("data.csv", parse_dates=["Zeitstempel"], index_col=0)
 dataframe.dropna(axis=1, how="all", inplace=True) #delete empty columns
 
 #numerical version of data
@@ -59,12 +57,29 @@ def plot_0(axis_0, axis_1):
             axis_1_numeric.append(übersetzer[dataframe.iloc[i, :][axis_1]]-1)
 
 
-        #plot
-        fig, ax = plt.subplots(figsize=(12,8))
-        sns.scatterplot(data=dataframe, x=axis_0_numeric, y=axis_1_numeric, ax=ax, alpha=.7)
+        #plot 
+        #durch sharey müssen ticks für ax1 nicht neu gesetzt werden
+        fig, (ax, ax1) = plt.subplots(2, 1, figsize=(16, 20), sharey=True)
+        plt.suptitle("Mind The Difference Between Correlation And Causation", y=0.9, fontsize=15)
+        ax11 = plt.twinx(ax1) #twinx
+        
+        
+        sns.scatterplot(data=dataframe, x=axis_0_numeric, y=axis_1_numeric, ax=ax, alpha=.7, edgecolor=None)
+        sns.lineplot(data=dataframe, x=dataframe.index, y=axis_1_numeric, color="r", marker="^",
+                    markevery=10, ax=ax1, label="axis_0", legend=None)
+        sns.lineplot(data=dataframe, x=dataframe.index, y=axis_0_numeric, ax=ax11, color="maroon", linestyle="--",
+                    label="axis_1, rechts", legend=None)
+        
         
         #label
         ax.set(xlabel=str(axis_0), ylabel=str(axis_1))
+        ax1.set(xlabel="Date", ylabel=str(axis_1))
+        ax11.set(ylabel=str(axis_0))
+        
+        #legend
+        h1, l1 = ax1.get_legend_handles_labels()
+        h2, l2 = ax11.get_legend_handles_labels()
+        ax1.legend(h1+h2, l1+l2, loc="lower center")
 
         #set ticks
         ax.set_xticks(range(len(xticklabels)))
@@ -72,13 +87,15 @@ def plot_0(axis_0, axis_1):
 
         ax.set_yticks(range(len(yticklabels)))
         ax.set_yticklabels(yticklabels)
+        ax11.set_yticks(range(len(xticklabels)))
+        ax11.set_yticklabels(xticklabels)
         
         
         #correlation
         corr = round(pd.Series(axis_0_numeric).corr(pd.Series(axis_1_numeric)),2)
         
         #textbox
-        ax.text(0.0, -0.08, f"Correlation: {corr}.", transform=ax.transAxes, fontsize=10,
+        ax.text(0.0, -0.08, f"Correlation: {corr}", transform=ax.transAxes, fontsize=10,
                    verticalalignment='top', bbox={"boxstyle":'round', "facecolor":'wheat', "alpha":0.2})
         
     except Exception as e:
